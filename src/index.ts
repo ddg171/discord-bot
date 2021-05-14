@@ -23,7 +23,7 @@ client.on('message', (message:Discord.Message) => {
     // 編集も無視
     if( message.editedTimestamp) return
     // bot専用チャンネル以外も無視
-    if((message.channel as Discord.TextChannel).name === BOT_CHANNNEL_NAME) return
+    if((message.channel as Discord.TextChannel).name !== BOT_CHANNNEL_NAME) return
     // 送信者のID
     const senderId:string = message.author.id
     // 送信者のユーザー名
