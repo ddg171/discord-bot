@@ -8,6 +8,14 @@ import Discord from "discord.js"
 export const commandList:CommandMap ={
     // 役職一覧表示
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    help:(message:Discord.Message,__:string|undefined=undefined)=>{
+        message.channel.send("'roles' :権限一覧をプライベートメッセージで送信します。\n")
+        message.channel.send("'set [ロールを半角スペース区切り]' :指定したロールを付与します。\n")
+        message.channel.send("'remove [ロールを半角スペース区切り]' :指定したロールをユーザーから削除します。\n")
+        message.channel.send("'set [ロールを半角スペース区切り]' :指定したロールを付与します。\n")
+        message.channel.send("'show [ロール]' :指定したロールがコマンドで操作可能か表示します。\n")
+    },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     roles:(message:Discord.Message,__:string|undefined=undefined)=>{
         const roleList :string[] = getRoleList(message)
         message.author.send(["サーバー内ロール一覧:",...roleList].join("\n"))
@@ -90,14 +98,19 @@ export function executeCommand(message:Discord.Message,commandMap:CommandMap):vo
         throw new Error('何をしたいのかわからん')
     }
     // 一致したものがあれば実行
-    try {
-        oparation(message,command[1])
-    } catch (err) {
-        if( err instanceof Error){
-            throw err
+    // 複数のロールに対応する
+    console.log("command match")
+    const options:string[]= command.slice(1)
+    options.forEach((o:string)=>{
+        try {
+            oparation(message,o)
+        } catch (err) {
+            if( err instanceof Error){
+                throw err
+            }
+            throw Error('何もわからん')
         }
-        throw Error('何もわからん')
-    }
+    })
 }
 
 // 名前からロールを探す関数

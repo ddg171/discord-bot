@@ -60,6 +60,7 @@ client.on('message', (message:Discord.Message) => {
     try {
         executeCommand(message,commandList)
     } catch (error) {
+        console.log(error)
         const responseText:string= checkError(error)? error.message:"なんもわからん"
         message.channel.send(`<@${senderId}> ${responseText}`)
     }
