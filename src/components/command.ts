@@ -90,14 +90,18 @@ export function executeCommand(message:Discord.Message,commandMap:CommandMap):vo
         throw new Error('何をしたいのかわからん')
     }
     // 一致したものがあれば実行
-    try {
-        oparation(message,command[1])
-    } catch (err) {
-        if( err instanceof Error){
-            throw err
+    // 複数のロールに対応する
+    const options:string[]= command.slice(1)
+    options.forEach((o:string)=>{
+        try {
+            oparation(message,o)
+        } catch (err) {
+            if( err instanceof Error){
+                throw err
+            }
+            throw Error('何もわからん')
         }
-        throw Error('何もわからん')
-    }
+    })
 }
 
 // 名前からロールを探す関数
