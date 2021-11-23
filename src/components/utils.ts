@@ -5,3 +5,7 @@ export function isNyaan(str:string):boolean{
 export function isPoripori(str:string):boolean{
     return str.indexOf("ポリポリ")>=0
 }
+
+export function checkError(o:unknown):o is Error{
+    return o instanceof Error
+}
