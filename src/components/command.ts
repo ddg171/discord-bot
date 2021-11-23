@@ -8,6 +8,14 @@ import Discord from "discord.js"
 export const commandList:CommandMap ={
     // 役職一覧表示
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    help:(message:Discord.Message,__:string|undefined=undefined)=>{
+        message.channel.send("'roles' :権限一覧をプライベートメッセージで送信します。\n")
+        message.channel.send("'set [ロールを半角スペース区切り]' :指定したロールを付与します。\n")
+        message.channel.send("'remove [ロールを半角スペース区切り]' :指定したロールをユーザーから削除します。\n")
+        message.channel.send("'set [ロールを半角スペース区切り]' :指定したロールを付与します。\n")
+        message.channel.send("'show [ロール]' :指定したロールがコマンドで操作可能か表示します。\n")
+    },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     roles:(message:Discord.Message,__:string|undefined=undefined)=>{
         const roleList :string[] = getRoleList(message)
         message.author.send(["サーバー内ロール一覧:",...roleList].join("\n"))
@@ -91,6 +99,7 @@ export function executeCommand(message:Discord.Message,commandMap:CommandMap):vo
     }
     // 一致したものがあれば実行
     // 複数のロールに対応する
+    console.log("command match")
     const options:string[]= command.slice(1)
     options.forEach((o:string)=>{
         try {
