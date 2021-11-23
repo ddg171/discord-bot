@@ -100,7 +100,7 @@ export function executeCommand(message:Discord.Message,commandMap:CommandMap):vo
     // 一致したものがあれば実行
     // 複数のロールに対応する
     console.log("command match")
-    const options:string|string[]= command.slice(1)
+    const options:string|string[]=command.length>1? command.slice(1):command[1]
     if(typeof options === "string"){
         oparation(message,options)
         return
