@@ -7,7 +7,16 @@ import Discord from "discord.js"
 
 export const commandList:CommandMap ={
     // 役職一覧表示
-    roles:(message:Discord.Message,_:string|undefined=undefined)=>{
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    help:(message:Discord.Message,__:string|undefined=undefined)=>{
+        message.channel.send("'roles' :権限一覧をプライベートメッセージで送信します。\n")
+        message.channel.send("'set [ロールを半角スペース区切り]' :指定したロールを付与します。\n")
+        message.channel.send("'remove [ロールを半角スペース区切り]' :指定したロールをユーザーから削除します。\n")
+        message.channel.send("'set [ロールを半角スペース区切り]' :指定したロールを付与します。\n")
+        message.channel.send("'show [ロール]' :指定したロールがコマンドで操作可能か表示します。\n")
+    },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    roles:(message:Discord.Message,__:string|undefined=undefined)=>{
         const roleList :string[] = getRoleList(message)
         message.author.send(["サーバー内ロール一覧:",...roleList].join("\n"))
     },
@@ -84,19 +93,28 @@ export function executeCommand(message:Discord.Message,commandMap:CommandMap):vo
         return
     }
     // 第２引数のkeyとコマンドが一致するか処理を回す。
-    const oparation:Function|undefined =commandMap[command[0].toString().toLowerCase()]
+    const oparation:((message: Discord.Message,S?:string)=>void)|undefined =commandMap[command[0].toString().toLowerCase()]
     if(!oparation){
         throw new Error('何をしたいのかわからん')
     }
     // 一致したものがあれば実行
-    try {
-        oparation(message,command[1])
-    } catch (err) {
-        if( err instanceof Error){
-            throw err
-        }
-        throw Error('何もわからん')
+    // 複数のロールに対応する
+    console.log("command match")
+    const options:string|string[]=command.length>1? command.slice(1):command[1]
+    if(!options || typeof options === "string"){
+        oparation(message,options)
+        return
     }
+    options.forEach((o:string)=>{
+        try {
+            oparation(message,o)
+        } catch (err) {
+            if( err instanceof Error){
+                throw err
+            }
+            throw Error('何もわからん')
+        }
+    })
 }
 
 // 名前からロールを探す関数
@@ -144,17 +162,17 @@ export function getRoleList(message:Discord.Message):string[]{
     try {    
         const roles:string[]|undefined = message.guild?.roles?.cache.map((role)=>{return role.name})
         return roles?.filter(r=>r !== '@everyone') || []
-    } catch (error:any) {
+    } catch (error) {
         console.log(error)
         return []
     }
 }
 
-export function response(message:Discord.Message,str:string='ポリポリ'):void{
+export function response(message:Discord.Message,str='ポリポリ'):void{
     message.channel.send(`${mention(message)} \n${str}`)
 }
 
-export function responseDM(message:Discord.Message,str:string="ポリポリ"):void{
+export function responseDM(message:Discord.Message,str="ポリポリ"):void{
     const guildName:string =message.guild?.name || ""
     message.author.send(`${guildName}${guildName?'からの通知:':'通知:'}\n`+str)
 }

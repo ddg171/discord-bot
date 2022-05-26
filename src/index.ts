@@ -1,7 +1,7 @@
 import Discord from "discord.js"
 import {TOKEN} from './private'
 import {formatISO} from "date-fns"
-import { isNyaan, isPoripori } from "./components/utils";
+import { checkError, isNyaan, isPoripori } from "./components/utils";
 import { commandList, executeCommand,  responseDM } from "./components/command";
 import { BOT_CHANNNEL_NAME } from "./params";
 
@@ -9,7 +9,10 @@ const client:Discord.Client = new Discord.Client();
 
 client.once('ready', () => {
     console.log('start');
-    const myId:string|null = client.user!.id || null
+    const myId:string|undefined = client.user?.id 
+    if(!myId){
+        throw new Error("bot ID not found")
+    }
     const myName:string|null = client.user?.username || null
     console.log(`botID:${myId},botName:${myName}`)
     
@@ -29,10 +32,14 @@ client.on('message', (message:Discord.Message) => {
     // 送信者のユーザー名
     const senderName:string= message.author.username
     // bot自身のID
-    const myId:string = client.user!.id
+    
+    const myId:string|undefined = client.user?.id
+    if(!myId){
+        throw new Error("bot ID not found")
+    }
     const mentionedMember: Discord.Collection<string, Discord.GuildMember> | null = message.mentions.members
     // bot宛のメッセージかどうか
-    const isMentioned:boolean = !!(mentionedMember && mentionedMember.get(myId))
+    const isMentioned = !!(mentionedMember && mentionedMember.get(myId))
     // 社会性フィルター検知
     if(isNyaan(message.cleanContent)){
         responseDM(message,'何がニャーンだ。')
@@ -52,8 +59,9 @@ client.on('message', (message:Discord.Message) => {
 
     try {
         executeCommand(message,commandList)
-    } catch (error:any) {
-        const responseText:string= error?.toString()?.replace("Error: ","")||"なんもわからん"
+    } catch (error) {
+        console.log(error)
+        const responseText:string= checkError(error)? error.message:"なんもわからん"
         message.channel.send(`<@${senderId}> ${responseText}`)
     }
 });
