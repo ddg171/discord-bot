@@ -20,41 +20,41 @@ export const commandList:CommandMap ={
         const roleList :string[] = getRoleList(message)
         message.author.send(["サーバー内ロール一覧:",...roleList].join("\n"))
     },
-    set:(message:Discord.Message,roleName:string|undefined=undefined)=>{
-        const guild:Discord.Guild|null =message.guild
-        if(!guild){
-            throw Error("ﾇｰﾝ")
-        }
-        const role:Discord.Role|null = findRole(roleName,guild)
-        if(!role){
-            throw Error('ロールがわからん')
-        }
-        if(isProtectedRoll(roleName,PROTECTED_ROLES)){
-            throw Error('そのロールは無理')
-        }
-        const target:Discord.User =message.author 
-        setRole(target,role,guild).then(()=>{
-            response(message,`ロール付与:${roleName}`)
-        })    
+    // set:(message:Discord.Message,roleName:string|undefined=undefined)=>{
+    //     const guild:Discord.Guild|null =message.guild
+    //     if(!guild){
+    //         throw Error("ﾇｰﾝ")
+    //     }
+    //     const role:Discord.Role|null = findRole(roleName,guild)
+    //     if(!role){
+    //         throw Error('ロールがわからん')
+    //     }
+    //     if(isProtectedRoll(roleName,PROTECTED_ROLES)){
+    //         throw Error('そのロールは無理')
+    //     }
+    //     const target:Discord.User =message.author 
+    //     setRole(target,role,guild).then(()=>{
+    //         response(message,`ロール付与:${roleName}`)
+    //     })    
         
-    },
-    remove:(message:Discord.Message,roleName:string|undefined=undefined)=>{
-        const guild:Discord.Guild|null =message.guild
-        if(!guild){
-            throw Error("ﾇｰﾝ")
-        }
-        const role:Discord.Role|null = findRole(roleName,guild)
-        if(!role){
-            throw Error('ロールがわからん')
-        }
-        if(isProtectedRoll(roleName,PROTECTED_ROLES)){
-            throw Error('そのロールは無理')
-        }
-        const target:Discord.User =message.author 
-        removeRole(target,role,guild).then(()=>{
-            response(message,`ロール削除:${roleName}`)
-        })    
-    },
+    // },
+    // remove:(message:Discord.Message,roleName:string|undefined=undefined)=>{
+    //     const guild:Discord.Guild|null =message.guild
+    //     if(!guild){
+    //         throw Error("ﾇｰﾝ")
+    //     }
+    //     const role:Discord.Role|null = findRole(roleName,guild)
+    //     if(!role){
+    //         throw Error('ロールがわからん')
+    //     }
+    //     if(isProtectedRoll(roleName,PROTECTED_ROLES)){
+    //         throw Error('そのロールは無理')
+    //     }
+    //     const target:Discord.User =message.author 
+    //     removeRole(target,role,guild).then(()=>{
+    //         response(message,`ロール削除:${roleName}`)
+    //     })    
+    // },
     show:(message:Discord.Message,roleName:string|undefined=undefined)=>{
         const guild:Discord.Guild|null =message.guild
         if(!guild){
@@ -140,22 +140,22 @@ function mention(message:Discord.Message):string{
 }
 
 // ロールをつける関数
-async function setRole(target:Discord.User ,role:Discord.Role,guild:Discord.Guild):Promise<void>{
-    const guildUser = guild.member(target)
-    if(!guildUser){
-        throw Error('誰かわからん')
-    }
-    return await guildUser.roles.add(role).then(()=>{return})
-}
+// async function setRole(target:Discord.User ,role:Discord.Role,guild:Discord.Guild):Promise<void>{
+//     const guildUser = guild.member(target)
+//     if(!guildUser){
+//         throw Error('誰かわからん')
+//     }
+//     return await guildUser.roles.add(role).then(()=>{return})
+// }
 
 // ロールを外す関数
-async function removeRole(target:Discord.User ,role:Discord.Role,guild:Discord.Guild):Promise<void>{
-    const guildUser = guild.member(target)
-    if(!guildUser){
-        throw Error('多分鯖にいない人なんでわからん')
-    }
-    return await guildUser.roles.remove(role).then(()=>{return })
-}
+// async function removeRole(target:Discord.User ,role:Discord.Role,guild:Discord.Guild):Promise<void>{
+//     const guildUser = guild.member(target)
+//     if(!guildUser){
+//         throw Error('多分鯖にいない人なんでわからん')
+//     }
+//     return await guildUser.roles.remove(role).then(()=>{return })
+// }
 
 // ロール一覧表示
 export function getRoleList(message:Discord.Message):string[]{

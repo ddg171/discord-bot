@@ -1,12 +1,17 @@
-import Discord from "discord.js"
+import  Discord,{ Client, GatewayIntentBits,Events } from 'discord.js';
 import {TOKEN} from './private'
 import {formatISO} from "date-fns"
 import { checkError, isNyaan, isPoripori } from "./components/utils";
 import { commandList, executeCommand,  responseDM } from "./components/command";
 import { BOT_CHANNNEL_NAME } from "./params";
 
-const client:Discord.Client = new Discord.Client();
+ const { Guilds, GuildMessages, MessageContent } = GatewayIntentBits;
 
+ const options = {
+    intents: [Guilds, GuildMessages, MessageContent],
+};
+
+const client:Client = new Client(options);
 client.once('ready', () => {
     console.log('start');
     const myId:string|undefined = client.user?.id 
@@ -17,22 +22,18 @@ client.once('ready', () => {
     console.log(`botID:${myId},botName:${myName}`)
     
 });
-
-client.on('message', (message:Discord.Message) => {
+// メッセージが投稿された時
+client.on(Events.MessageCreate, (message:Discord.Message) => {
+    console.log(message);
     // botは無視
     if(message.author.bot) return
-    // 削除も無視
-    if(message.deleted) return
     // 編集も無視
     if( message.editedTimestamp) return
-    // bot専用チャンネル以外も無視
-    if((message.channel as Discord.TextChannel).name !== BOT_CHANNNEL_NAME) return
     // 送信者のID
     const senderId:string = message.author.id
     // 送信者のユーザー名
     const senderName:string= message.author.username
     // bot自身のID
-    
     const myId:string|undefined = client.user?.id
     if(!myId){
         throw new Error("bot ID not found")
