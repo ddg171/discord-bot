@@ -1,5 +1,4 @@
 import { CommandMap } from "../types";
-import {PROTECTED_ROLES} from "../params"
 import Discord from "discord.js"
 
 // 使用可能なコマンド一覧
@@ -8,18 +7,18 @@ import Discord from "discord.js"
 export const commandList:CommandMap ={
     // 役職一覧表示
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    help:(message:Discord.Message,__:string|undefined=undefined)=>{
-        message.channel.send("'roles' :権限一覧をプライベートメッセージで送信します。\n")
-        message.channel.send("'set [ロールを半角スペース区切り]' :指定したロールを付与します。\n")
-        message.channel.send("'remove [ロールを半角スペース区切り]' :指定したロールをユーザーから削除します。\n")
-        message.channel.send("'set [ロールを半角スペース区切り]' :指定したロールを付与します。\n")
-        message.channel.send("'show [ロール]' :指定したロールがコマンドで操作可能か表示します。\n")
-    },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    roles:(message:Discord.Message,__:string|undefined=undefined)=>{
-        const roleList :string[] = getRoleList(message)
-        message.author.send(["サーバー内ロール一覧:",...roleList].join("\n"))
-    },
+    // help:(message:Discord.Message,__:string|undefined=undefined)=>{
+    //     message.channel.send("'roles' :権限一覧をプライベートメッセージで送信します。\n")
+    //     message.channel.send("'set [ロールを半角スペース区切り]' :指定したロールを付与します。\n")
+    //     message.channel.send("'remove [ロールを半角スペース区切り]' :指定したロールをユーザーから削除します。\n")
+    //     message.channel.send("'set [ロールを半角スペース区切り]' :指定したロールを付与します。\n")
+    //     message.channel.send("'show [ロール]' :指定したロールがコマンドで操作可能か表示します。\n")
+    // },
+    // // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // roles:(message:Discord.Message,__:string|undefined=undefined)=>{
+    //     const roleList :string[] = getRoleList(message)
+    //     message.author.send(["サーバー内ロール一覧:",...roleList].join("\n"))
+    // },
     // set:(message:Discord.Message,roleName:string|undefined=undefined)=>{
     //     const guild:Discord.Guild|null =message.guild
     //     if(!guild){
@@ -55,22 +54,22 @@ export const commandList:CommandMap ={
     //         response(message,`ロール削除:${roleName}`)
     //     })    
     // },
-    show:(message:Discord.Message,roleName:string|undefined=undefined)=>{
-        const guild:Discord.Guild|null =message.guild
-        if(!guild){
-            throw Error("ﾇｰﾝ")
-        }
-        const role:Discord.Role|null = findRole(roleName,guild)
-        if(!role){
-            response(message,`そんなものはない`)
-            return
-        }
-        if(isProtectedRoll(roleName,PROTECTED_ROLES)){
-            response(message,`ロール名:${roleName}/選択不可`) 
-            return
-        }
-        response(message,`ロール名:${roleName}/選択可能`)  
-    },
+    // show:(message:Discord.Message,roleName:string|undefined=undefined)=>{
+    //     const guild:Discord.Guild|null =message.guild
+    //     if(!guild){
+    //         throw Error("ﾇｰﾝ")
+    //     }
+    //     const role:Discord.Role|null = findRole(roleName,guild)
+    //     if(!role){
+    //         response(message,`そんなものはない`)
+    //         return
+    //     }
+    //     if(isProtectedRoll(roleName,PROTECTED_ROLES)){
+    //         response(message,`ロール名:${roleName}/選択不可`) 
+    //         return
+    //     }
+    //     response(message,`ロール名:${roleName}/選択可能`)  
+    // },
 }
 
 

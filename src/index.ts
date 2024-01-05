@@ -1,9 +1,12 @@
 import  Discord,{ Client, GatewayIntentBits,Events } from 'discord.js';
-import {TOKEN} from './private'
+
 import {formatISO} from "date-fns"
 import { checkError, isNyaan, isPoripori } from "./components/utils";
 import { commandList, executeCommand,  responseDM } from "./components/command";
-import { BOT_CHANNNEL_NAME } from "./params";
+import  dotenv from 'dotenv';
+
+dotenv.config();
+
 
  const { Guilds, GuildMessages, MessageContent } = GatewayIntentBits;
 
@@ -14,14 +17,15 @@ import { BOT_CHANNNEL_NAME } from "./params";
 const client:Client = new Client(options);
 client.once('ready', () => {
     console.log('start');
-    const myId:string|undefined = client.user?.id 
+    const myId:string|undefined = client.user?.id
     if(!myId){
         throw new Error("bot ID not found")
     }
     const myName:string|null = client.user?.username || null
     console.log(`botID:${myId},botName:${myName}`)
-    
 });
+
+
 // メッセージが投稿された時
 client.on(Events.MessageCreate, (message:Discord.Message) => {
     console.log(message);
@@ -67,4 +71,4 @@ client.on(Events.MessageCreate, (message:Discord.Message) => {
     }
 });
 
-client.login(TOKEN);
+client.login(process.env.TOKEN);
