@@ -1,4 +1,4 @@
-import { CommandMap } from "../types";
+import { CommandMap } from "../../types";
 import Discord from "discord.js"
 
 // 使用可能なコマンド一覧
