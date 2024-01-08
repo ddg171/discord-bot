@@ -1,5 +1,4 @@
 node_modules
-src/private.ts
-src/params.ts
 dist
 .env
+src/data/guilds.db
