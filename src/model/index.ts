@@ -7,6 +7,7 @@ type Flags = {[T in typeof flags[number]]:boolean}
 
 interface Guild {
     id: string;
+    _id: string;
     homeChannelId: string;
     invitedBy: string|null;
     flags: Flags;
@@ -21,10 +22,11 @@ export class Guilds {
     constructor(db:Datastore<Guild>){
         this.db=db
     }
-    async create(guildId:string,channelId:string,initedBy:string|null=null){
+    async create(guildId:string,initedBy:string|null=null){
         const config = {
             id: guildId,
-            homeChannelId: channelId,
+            _id: guildId,
+            homeChannelId: null,
             initedBy,
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -40,7 +42,7 @@ export class Guilds {
         return result;
     }
     async findOne(guildId:string){
-        const result= await this.db.findOne({id:guildId})
+        const result= await this.db.findOne({id:guildId}) 
         return result;
     }
     async remove(guildId:string){

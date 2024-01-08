@@ -1,6 +1,7 @@
 import {Client,Message,GuildMember,Collection} from 'discord.js';
 import { Guilds } from '../model';
 import { showMessageLog } from '../utils/messageUtils';
+import { CommandResult,commands } from './commands/v2';
 
 const onReady=(client:Client)=>{
     return () =>{
@@ -14,9 +15,9 @@ const onReady=(client:Client)=>{
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const onMessage=(client:Client,guilds:Guilds)=>{
-    return (message:Message) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+const onMessage=(client:Client,guilds:Guilds,commands:{[T:string]:any})=>{
+    return async (message:Message) => {
     const myId:string|undefined = client.user?.id
     // botは無視
     if(message.author.bot) return
@@ -30,8 +31,24 @@ const onMessage=(client:Client,guilds:Guilds)=>{
     if(!isMentioned) return
         try {
             showMessageLog(message,myId)
+            const content = message.cleanContent
+            const contentArray = content.split(" ").filter((c)=>!!c).slice(1)
+            if(contentArray.length===0) {
+                throw new Error("なんもわからん")
+            }
+            console.log(contentArray)
+            const command = contentArray[0]
+            if(!commands[command]){
+                throw new Error("何を言いたいのかわからん")
+            }
+            const result = await commands[command](message,...contentArray.slice(1))
+            console.log(result)
+            message.channel.send(content)
         } catch (error) {
             console.log(error)
+            message.channel.send("エラーが発生しました")
+
+
         }
     }
 }
@@ -39,6 +56,6 @@ const onMessage=(client:Client,guilds:Guilds)=>{
 export const eventHandlers = (client:Client,guilds:Guilds) => {
     return {
         onReady: onReady(client),
-        onMessage: onMessage(client,guilds)
+        onMessage: onMessage(client,guilds,commands(guilds))
     }
 }
