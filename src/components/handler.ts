@@ -1,7 +1,8 @@
-import {Client,Message,GuildMember,Collection} from 'discord.js';
+import { Guilds } from './../model/index';
+import {Client,Message,GuildMember,Collection, Guild} from 'discord.js';
 import { Guilds } from '../model';
 import { showMessageLog } from '../utils/messageUtils';
-import { CommandResult,commands } from './commands/v2';
+import { commands } from './commands/v2';
 
 const onReady=(client:Client)=>{
     return () =>{
@@ -28,16 +29,25 @@ const onMessage=(client:Client,guilds:Guilds,commands:{[T:string]:any})=>{
     const mentionedMember: Collection<string, GuildMember> | null = message.mentions.members
     // bot宛のメッセージかどうか
     const isMentioned = !!(myId && mentionedMember && mentionedMember.get(myId))
+    const guild:Guild|undefined = message.guild
     if(!isMentioned) return
         try {
             showMessageLog(message,myId)
+            // まずはguildを確認
+            if(!guild){
+                throw new Error("guild not found")
+            }
+            // 設定データの有無を確認
+            const findResult = await guilds.findOne(guild.id)
+            // 設定データの確認フラグ
+            const hasConfig = !!findResult
             const content = message.cleanContent
             const contentArray = content.split(" ").filter((c)=>!!c).slice(1)
             if(contentArray.length===0) {
                 throw new Error("なんもわからん")
             }
-            console.log(contentArray)
             const command = contentArray[0]
+            if(command==="setup"&& !hasConfig){}  
             if(!commands[command]){
                 throw new Error("何を言いたいのかわからん")
             }

@@ -16,3 +16,23 @@ export const showMessageLog = (message: Message,myId:string|undefined=undefined)
     console.log(`isMentioned:${isMentioned}`)
 }
 
+
+export interface CommandResult {
+    message:Message
+    type:"DM"|"reply"|"message"
+    body:string
+}
+
+export function responseHandler(result:CommandResult){
+    if(!result){return}
+    if(type==="DM"){
+       return result.message.author.send(result.body)
+    }
+    if(type==="reply"){
+        return result.message.reply(result.body)
+    }
+    if(type==="message"){
+        return result.message.channel.send(result.body)
+    }
+    throw new Error("invalid type")
+}
