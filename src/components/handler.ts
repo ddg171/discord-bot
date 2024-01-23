@@ -1,8 +1,7 @@
-import { Guilds } from './../model/index';
+
 import {Client,Message,GuildMember,Collection, Guild} from 'discord.js';
-import { Guilds } from '../model';
 import { showMessageLog } from '../utils/messageUtils';
-import { commands } from './commands/v2';
+import { commands,checkExistConfig,checkCommand } from './commands/v2';
 
 const onReady=(client:Client)=>{
     return () =>{
@@ -17,7 +16,7 @@ const onReady=(client:Client)=>{
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-const onMessage=(client:Client,guilds:Guilds,commands:{[T:string]:any})=>{
+const onMessage=(client:Client)=>{
     return async (message:Message) => {
     const myId:string|undefined = client.user?.id
     // botは無視
@@ -29,7 +28,7 @@ const onMessage=(client:Client,guilds:Guilds,commands:{[T:string]:any})=>{
     const mentionedMember: Collection<string, GuildMember> | null = message.mentions.members
     // bot宛のメッセージかどうか
     const isMentioned = !!(myId && mentionedMember && mentionedMember.get(myId))
-    const guild:Guild|undefined = message.guild
+    const guild:Guild|null = message.guild
     if(!isMentioned) return
         try {
             showMessageLog(message,myId)
@@ -38,7 +37,7 @@ const onMessage=(client:Client,guilds:Guilds,commands:{[T:string]:any})=>{
                 throw new Error("guild not found")
             }
             // 設定データの有無を確認
-            const findResult = await guilds.findOne(guild.id)
+            const findResult = await checkExistConfig(message)
             // 設定データの確認フラグ
             const hasConfig = !!findResult
             const content = message.cleanContent
@@ -47,11 +46,10 @@ const onMessage=(client:Client,guilds:Guilds,commands:{[T:string]:any})=>{
                 throw new Error("なんもわからん")
             }
             const command = contentArray[0]
-            if(command==="setup"&& !hasConfig){}  
-            if(!commands[command]){
-                throw new Error("何を言いたいのかわからん")
+            if(!checkCommand(command)){
+                throw new Error("コマンドが不正です")
             }
-            const result = await commands[command](message,...contentArray.slice(1))
+            const result = await commands[command](message,...contentArray)
             console.log(result)
             message.channel.send(content)
         } catch (error) {
@@ -63,9 +61,9 @@ const onMessage=(client:Client,guilds:Guilds,commands:{[T:string]:any})=>{
     }
 }
 
-export const eventHandlers = (client:Client,guilds:Guilds) => {
+export const useEventHandlers = (client:Client) => {
     return {
         onReady: onReady(client),
-        onMessage: onMessage(client,guilds,commands(guilds))
+        onMessage: onMessage(client)
     }
 }

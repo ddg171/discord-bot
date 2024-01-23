@@ -24,14 +24,15 @@ export interface CommandResult {
 }
 
 export function responseHandler(result:CommandResult){
+    const t = result.type
     if(!result){return}
-    if(type==="DM"){
+    if(t==="DM"){
        return result.message.author.send(result.body)
     }
-    if(type==="reply"){
+    if(t==="reply"){
         return result.message.reply(result.body)
     }
-    if(type==="message"){
+    if(t==="message"){
         return result.message.channel.send(result.body)
     }
     throw new Error("invalid type")
